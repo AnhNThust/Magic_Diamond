@@ -14,8 +14,8 @@ public class Brick : MonoBehaviour
 	[SerializeField] private bool canHide;
 	[SerializeField] private List<Transform> boxes = new List<Transform>();
 	[SerializeField] private Transform boxChooseMove;
+	[SerializeField] protected bool canCheck = false;
 
-	protected bool canCheck = false;
 	private List<Transform> boxesHide = new List<Transform>();
 
 	protected virtual void OnEnable()
@@ -46,12 +46,10 @@ public class Brick : MonoBehaviour
 
 	protected virtual void OnClickHaveDiamond()
 	{
-		if (!canCheck) return;
 	}
 
 	protected virtual void OnClickNoneDiamond()
 	{
-		if (!canCheck) return;
 	}
 
 	public void SetInfo(int id, Transform left, Transform right, Transform above, Transform under)
@@ -80,15 +78,11 @@ public class Brick : MonoBehaviour
 
 	private void GetRandomBoxMove()
 	{
-		while (true)
-		{
-			int id = Random.Range(0, boxes.Count);
-			if (boxes[id].GetComponent<BoxMove>() != null || boxesHide.Contains(boxes[id])) continue;
+		int id = Random.Range(0, boxes.Count);
+		if (boxes[id].GetComponent<BoxMove>() != null || boxesHide.Contains(boxes[id])) return;
 
-			boxChooseMove = boxes[id];
-			BoxMove move = boxChooseMove.gameObject.AddComponent(typeof(BoxMove)) as BoxMove;
-			move.Target = transform.position;
-			break;
-		}
+		boxChooseMove = boxes[id];
+		BoxMove move = boxChooseMove.gameObject.AddComponent(typeof(BoxMove)) as BoxMove;
+		move.Target = transform.position;
 	}
 }

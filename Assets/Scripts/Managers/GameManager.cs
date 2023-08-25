@@ -8,16 +8,14 @@ public class GameManager : MonoBehaviour
 	[SerializeField] private int totalDiamond = 0;
 	[SerializeField] private int counter = 0;
 
-	[SerializeField] private int totalBoxMove;
-	[SerializeField] private int count;
+	private bool isBoxStop = false;
 
 	private void OnEnable()
 	{
 		EventDispatcher.AddEvent(EventID.TotalDiamond, OnGetTotalDiamond);
 		EventDispatcher.AddEvent(EventID.CountDiamond, OnCountDiamondChanged);
 
-		EventDispatcher.AddEvent(EventID.TotalBoxMove, OnTotalBoxMoveChanged);
-		EventDispatcher.AddEvent(EventID.CountBoxMove, OnCountBoxMoveChanged);
+		EventDispatcher.AddEvent(EventID.BoxStop, OnBoxStop);
 	}
 
 	private void OnDisable()
@@ -25,15 +23,14 @@ public class GameManager : MonoBehaviour
 		EventDispatcher.RemoveEvent(EventID.TotalDiamond, OnGetTotalDiamond);
 		EventDispatcher.RemoveEvent(EventID.CountDiamond, OnCountDiamondChanged);
 
-		EventDispatcher.RemoveEvent(EventID.TotalBoxMove, OnTotalBoxMoveChanged);
-		EventDispatcher.RemoveEvent(EventID.CountBoxMove, OnCountBoxMoveChanged);
+		EventDispatcher.RemoveEvent(EventID.BoxStop, OnBoxStop);
 	}
 
 	private IEnumerator Victory()
 	{
-		yield return new WaitUntil(() => counter >= totalDiamond);
+		//yield return new WaitUntil(() => counter >= totalDiamond);
 
-		yield return new WaitForSeconds(2f);
+		yield return new WaitForSeconds(1f);
 
 		if (GameData.CurrentLevel < GameData.TotalLevel)
 		{
@@ -49,27 +46,27 @@ public class GameManager : MonoBehaviour
 	private void OnCountDiamondChanged(object obj)
 	{
 		counter += (int)obj;
+
+		if (counter >= totalDiamond)
+		{
+			EventDispatcher.PostEvent(EventID.CanCheckChanged, false);
+			StartCoroutine(Victory());
+		}
 	}
 
 	private void OnGetTotalDiamond(object obj)
 	{
 		totalDiamond = (int)obj;
 
-		StartCoroutine(Victory());
+		//StartCoroutine(Victory());
 	}
 
-	private void OnCountBoxMoveChanged(object obj)
+	private void OnBoxStop(object obj)
 	{
-		count += (int)obj;
+		isBoxStop = (bool)obj;
 
-		if (count >= totalBoxMove)
-		{
-			EventDispatcher.PostEvent(EventID.CanCheckChanged, true);
-		}
-	}
+		if (!isBoxStop) return;
 
-	private void OnTotalBoxMoveChanged(object obj)
-	{
-		totalBoxMove = (int)obj;
+		EventDispatcher.PostEvent(EventID.CanCheckChanged, true);
 	}
 }

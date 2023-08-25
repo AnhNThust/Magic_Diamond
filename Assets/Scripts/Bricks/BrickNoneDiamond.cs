@@ -16,6 +16,8 @@ public class BrickNoneDiamond : Brick
 	{
 		base.OnClickNoneDiamond();
 
+		if (!canCheck) return;
+
 		UIManager.ShowDefeat();
 	}
 }

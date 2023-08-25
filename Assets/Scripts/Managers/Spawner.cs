@@ -15,10 +15,7 @@ public class Spawner : MonoBehaviour
 	[SerializeField] private List<Button> brickList = new List<Button>();
 	[SerializeField] private List<int> indexList = new List<int>();
 	[SerializeField] private List<Transform> listBrickNearHaveDiamond = new List<Transform>();
-
-	public int RowColNumber { get => rowColNumber; set => rowColNumber = value; }
-
-	public bool canSpawn = false;
+	[SerializeField] private bool canSpawn = false;
 
 	private void OnEnable()
 	{
@@ -30,12 +27,9 @@ public class Spawner : MonoBehaviour
 	private void CalculateLevel()
 	{
 		rowColNumber = GameData.CurrentMap + 2;
-		//GameData.NumberDiamond = rowColNumber;
-		//numberDiamond = rowColNumber;
 
 		if (GameData.CurrentLevel < GameData.TotalLevel && GameData.CurrentLevel % rowColNumber == 1)
 		{
-			//numberDiamond += (GameData.CurrentLevel / 3);
 			GameData.NumberDiamond = rowColNumber + (GameData.CurrentLevel / rowColNumber);
 		}
 
@@ -85,10 +79,10 @@ public class Spawner : MonoBehaviour
 		// Hide Diamond
 		HideDiamond();
 
-		yield return new WaitForSeconds(2f);
+		//yield return new WaitForSeconds(2f);
 
 		// TODO: For hard level
-		if (GameData.CurrentLevel >= Mathf.FloorToInt(0.65f * GameData.TotalLevel))
+		if (GameData.CurrentLevel >= GameData.HardLevel)
 		{
 			GetRandomBrickHide();
 		}
@@ -114,7 +108,12 @@ public class Spawner : MonoBehaviour
 	private void GetBrickHaveDiamond()
 	{
 		int n = 2 + 2 * rowColNumber;
-		int id = Random.Range(0, n);
+		int id;
+		do
+		{
+			id = Random.Range(0, n);
+		} while (GameData.Indexes.Contains(id));
+		GameData.Indexes.Add(id);
 
 		// doc, ngang, cheo
 		if (id >= 0 && id < rowColNumber)
@@ -208,6 +207,11 @@ public class Spawner : MonoBehaviour
 		}
 
 		EventDispatcher.PostEvent(EventID.CanDetachGridLayout, true);
+
+		if (GameData.CurrentLevel <= GameData.HardLevel)
+		{
+			EventDispatcher.PostEvent(EventID.CanCheckChanged, true);
+		}
 	}
 
 	private void SetBrickInfo(int id, Brick brick)

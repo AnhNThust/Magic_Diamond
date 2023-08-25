@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets.Scripts.Shared.Constant
 {
@@ -32,20 +33,6 @@ namespace Assets.Scripts.Shared.Constant
 			}
 		}
 
-		public static int CurrentLevel
-		{
-			get
-			{
-				return PlayerPrefs.GetInt(KEY.CURRENT_LEVEL, 1);
-			}
-
-			set
-			{
-				PlayerPrefs.SetInt(KEY.CURRENT_LEVEL, value);
-				EventDispatcher.PostEvent(EventID.CurrentLevelChanged, value);
-			}
-		}
-
 		public static int NumberDiamond
 		{
 			get
@@ -58,6 +45,10 @@ namespace Assets.Scripts.Shared.Constant
 				PlayerPrefs.SetInt(KEY.NUMBER_DIAMOND, value);
 			}
 		}
+
+		public static int CurrentLevel = 1;
+		public static int HardLevel = Mathf.FloorToInt(0.65f * GameData.TotalLevel);
+		public static List<int> Indexes = new(); // Lien quan den Ham GetBrickHaveDiamond trong class Spawner
 	}
 
 	public class KEY

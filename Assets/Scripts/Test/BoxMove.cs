@@ -8,11 +8,11 @@ public class BoxMove : MonoBehaviour
 
 	private void Update()
 	{
-		transform.position = Vector3.MoveTowards(transform.position, target, 0.02f);
+		transform.position = Vector3.MoveTowards(transform.position, target, 2f * Time.deltaTime);
 
 		if (transform.position == target)
 		{
-			EventDispatcher.PostEvent(EventID.CountBoxMove, 1);
+			EventDispatcher.PostEvent(EventID.BoxStop, true);
 			Destroy(transform.GetComponent<BoxMove>());
 		}
 	}

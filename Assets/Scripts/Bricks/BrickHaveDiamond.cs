@@ -15,6 +15,8 @@ public class BrickHaveDiamond : Brick
 	{
 		base.OnClickHaveDiamond();
 
+		if (!canCheck) return;
+
 		transform.Find("Diamond").gameObject.SetActive(true);
 		EventDispatcher.PostEvent(EventID.CountDiamond, 1);
 	}
